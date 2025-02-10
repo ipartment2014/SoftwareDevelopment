@@ -1,6 +1,6 @@
 # SoftwareDevelopment
-*Week2 Journals
+**Week2 Journals**
 *Software Process Models and Project Backlog Creation
 
-*Week-4 Journals
+**Week-4 Journals**
 *Wire framing and Component Designing
