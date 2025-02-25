@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub User Info</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="min-h-screen flex items-center justify-center p-4">
+        <!-- Loading Message -->
+        <div id="loading" class="text-gray-600 text-xl">Loading user data...</div>
+        <!-- User Info Container -->
+        <div id="userContainer" class="hidden bg-white p-6 rounded-md shadow-md max-w-sm w-full"></div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const loading = document.getElementById("loading");
+        const userContainer = document.getElementById("userContainer");
+
+        // Fetch GitHub user data with async/await
+        async function fetchUserData() {
+            try {
+                const data = await fetch("https://api.github.com/users/ipartment2014");
+                const json = await data.json();
+                console.log(json); // Log the full response
+                console.log("Data fetched successfully."); // Mimic "component did mount"
+                return json;
+            } catch (error) {
+                console.error("Error fetching user data:", error);
+                return null;
+            }
+        }
+
+        // Render user info
+        function renderUser(userInfo) {
+            loading.classList.add("hidden");
+            if (!userInfo) {
+                userContainer.innerHTML = "<p class='text-red-600'>Failed to load user data.</p>";
+                userContainer.classList.remove("hidden");
+                return;
+            }
+            userContainer.innerHTML = `
+                <div class="text-center">
+                    <img src="${userInfo.avatar_url}" alt="${userInfo.login}" class="w-32 h-32 rounded-full mx-auto mb-4">
+                    <h2 class="text-2xl font-semibold text-gray-800">${userInfo.name || userInfo.login}</h2>
+                    <p class="text-gray-600">GitHub: <a href="${userInfo.html_url}" target="_blank" class="text-blue-500 hover:underline">${userInfo.login}</a></p>
+                </div>
+            `;
+            userContainer.classList.remove("hidden");
+        }
+
+        // Fetch and display on load
+        window.addEventListener("load", async () => {
+            const userInfo = await fetchUserData();
+            renderUser(userInfo);
+        });
+    </script>
+</body>
+</html>
