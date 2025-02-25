@@ -1,96 +1,54 @@
-import pygame
-import random
-
-# Initialize Pygame
-pygame.init()
-
-# Set up the display
-WIDTH = 800
-HEIGHT = 600
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Bike Game with Enemies")
-
-# Colors
-WHITE = (255, 255, 255)
-RED = (255, 0, 0)
-GREEN = (0, 255, 0)
-
-# Bike properties
-bike_x = WIDTH // 2
-bike_y = HEIGHT - 60
-bike_width = 40
-bike_height = 20
-bike_speed = 5
-
-# Enemy properties
-enemy_width = 30
-enemy_height = 30
-enemy_speed = 4
-enemies = []
-
-# Create multiple enemies
-def create_enemy():
-    x = random.randint(0, WIDTH - enemy_width)
-    return {'x': x, 'y': -enemy_height}
-
-# Initial enemies
-for _ in range(5):  # 5 enemies to start
-    enemies.append(create_enemy())
-
-# Game variables
-score = 0
-clock = pygame.time.Clock()
-
-# Game loop
-running = True
-while running:
-    # Event handling
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-
-    # Bike movement
-    keys = pygame.key.get_pressed()
-    if keys[pygame.K_LEFT] and bike_x > 0:
-        bike_x -= bike_speed
-    if keys[pygame.K_RIGHT] and bike_x < WIDTH - bike_width:
-        bike_x += bike_speed
-
-    # Update enemies
-    for enemy in enemies[:]:
-        enemy['y'] += enemy_speed
-        # Remove enemy if off screen and add new one
-        if enemy['y'] > HEIGHT:
-            enemies.remove(enemy)
-            enemies.append(create_enemy())
-            score += 1
-
-    # Collision detection
-    bike_rect = pygame.Rect(bike_x, bike_y, bike_width, bike_height)
-    for enemy in enemies:
-        enemy_rect = pygame.Rect(enemy['x'], enemy['y'], enemy_width, enemy_height)
-        if bike_rect.colliderect(enemy_rect):
-            running = False
-
-    # Draw everything
-    screen.fill(WHITE)
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Click Game</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+        #game-area {
+            width: 200px;
+            height: 200px;
+            background-color: red;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Click the square to score!</h1>
+    <p>Score: <span id="score">0</span></p>
+    <div id="game-area"></div>
     
-    # Draw bike
-    pygame.draw.rect(screen, GREEN, (bike_x, bike_y, bike_width, bike_height))
-    
-    # Draw enemies
-    for enemy in enemies:
-        pygame.draw.rect(screen, RED, (enemy['x'], enemy['y'], enemy_width, enemy_height))
+    <script>
+        let score = 0;
+        let size = 200;
+        const gameArea = document.getElementById('game-area');
+        const scoreDisplay = document.getElementById('score');
 
-    # Draw score
-    font = pygame.font.Font(None, 36)
-    score_text = font.render(f"Score: {score}", True, (0, 0, 0))
-    screen.blit(score_text, (10, 10))
+        gameArea.addEventListener('click', () => {
+            score += Math.round(200 / size);
+            scoreDisplay.textContent = score;
+            size = Math.max(20, size * 0.9);
+            gameArea.style.width = `${size}px`;
+            gameArea.style.height = `${size}px`;
+            moveGameArea();
+        });
 
-    # Update display
-    pygame.display.flip()
-    clock.tick(60)
-
-# Game over
-print(f"Game Over! Final Score: {score}")
-pygame.quit()
+        function moveGameArea() {
+            const maxX = window.innerWidth - size;
+            const maxY = window.innerHeight - size;
+            const newX = Math.random() * maxX;
+            const newY = Math.random() * maxY;
+            gameArea.style.left = `${newX}px`;
+            gameArea.style.top = `${newY}px`;
+        }
+    </script>
+</body>
+</html>
